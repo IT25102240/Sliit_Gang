@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${pkg.name} + ' – EverAfter'">Package Detail</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet"/>
+    <style>
+        body { background:#fdf8f4; } .navbar { background:#7c3f58 !important; } .navbar-brand,.nav-link { color:#fff !important; }
+        .btn-primary { background:#7c3f58; border-color:#7c3f58; }
+        .hero-pkg { background:linear-gradient(135deg,#f3e8ee,#fdf2e9); height:220px; border-radius:16px;
+                    display:flex; align-items:center; justify-content:center; font-size:5rem; margin-bottom:2rem; }
+        .price-box { background:linear-gradient(135deg,#7c3f58,#a0556e); color:#fff; border-radius:12px; padding:1.5rem; }
+        .include-item { background:#f8f4f0; border-radius:8px; padding:.4rem .8rem; font-size:.85rem; display:inline-block; margin:.2rem; }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/"><i class="bi bi-heart-fill me-2"></i>EverAfter</a>
+        <a class="nav-link" href="/packages"><i class="bi bi-arrow-left me-1"></i>Back to Packages</a>
+    </div>
+</nav>
+
+<div class="container py-5">
+    <div class="row g-5">
+        <div class="col-lg-8">
+            <div class="hero-pkg">
+                <span th:if="${pkg.packageType == 'Basic'}">🌸</span>
+                <span th:if="${pkg.packageType == 'Premium'}">👑</span>
+            </div>
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <span class="badge" style="background:#7c3f58;font-size:.85rem;" th:text="${pkg.packageType}"></span>
+                <span class="text-muted small">by <strong th:text="${pkg.vendorName}"></strong></span>
+            </div>
+            <h2 class="fw-bold mb-2" th:text="${pkg.name}"></h2>
+            <p class="text-muted lead mb-4" th:text="${pkg.description}"></p>
+
+            <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <div class="card text-center p-3">
+                        <i class="bi bi-people fs-4 mb-1" style="color:#7c3f58;"></i>
+                        <div class="fw-bold fs-5" th:text="${pkg.maxGuests}"></div>
+                        <div class="text-muted small">Max Guests</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-center p-3">
+                        <i class="bi bi-currency-dollar fs-4 mb-1" style="color:#c4956a;"></i>
+                        <div class="fw-bold fs-5" th:text="'$' + ${pkg.discountedPrice}"></div>
+                        <div class="text-muted small">After Discount</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-center p-3">
+                        <i class="bi bi-check-circle fs-4 mb-1" style="color:#22c55e;"></i>
+                        <div class="fw-bold fs-5" th:text="${pkg.available ? 'Available' : 'Booked'}"></div>
+                        <div class="text-muted small">Status</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="price-box text-center mb-4">
+                <div style="font-size:2.5rem; font-weight:800;" th:text="'$' + ${pkg.price}"></div>
+                <div class="opacity-75">Starting price</div>
+            </div>
+            <th:block th:if="${currentUser != null}">
+                <a th:href="@{/bookings/create/{id}(id=${pkg.id})}" class="btn btn-primary w-100 btn-lg mb-2">
+                    <i class="bi bi-calendar-plus me-2"></i>Book This Package
+                </a>
+            </th:block>
+            <th:block th:if="${currentUser == null}">
+                <a href="/login" class="btn btn-primary w-100 btn-lg mb-2">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Sign In to Book
+                </a>
+            </th:block>
+            <a href="/packages" class="btn btn-outline-secondary w-100">View All Packages</a>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

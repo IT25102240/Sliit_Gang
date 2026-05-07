@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Sign In – EverAfter</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet"/>
+    <style>
+        body { background: linear-gradient(135deg,#7c3f58,#c4956a); min-height:100vh; display:flex; align-items:center; }
+        .card { border:none; border-radius:20px; box-shadow:0 20px 60px rgba(0,0,0,0.2); }
+        .brand { color:#7c3f58; font-weight:800; font-size:1.8rem; }
+        .btn-primary { background:#7c3f58; border-color:#7c3f58; border-radius:10px; padding:.7rem; }
+        .btn-primary:hover { background:#a0556e; border-color:#a0556e; }
+        .form-control:focus { border-color:#c4956a; box-shadow:0 0 0 .2rem rgba(196,149,106,.25); }
+        .demo-box { background:#fdf8f4; border-radius:10px; font-size:.85rem; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-5 col-lg-4">
+            <div class="card p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <div class="brand"><i class="bi bi-heart-fill me-2" style="color:#c4956a;"></i>EverAfter</div>
+                    <h5 class="fw-semibold mt-2 text-muted">Welcome Back</h5>
+                </div>
+
+                <div class="alert alert-danger" th:if="${error != null}" th:text="${error}"></div>
+                <div class="alert alert-success" th:if="${success != null}" th:text="${success}"></div>
+
+                <form th:action="@{/login}" method="post">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Email</label>
+                        <input type="email" name="email" class="form-control" placeholder="you@example.com" required/>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Password</label>
+                        <input type="password" name="password" class="form-control" placeholder="••••••••" required/>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 fw-semibold">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+                    </button>
+                </form>
+
+                <div class="demo-box p-3 mt-4">
+                    <strong class="d-block mb-1">Demo Credentials:</strong>
+                    <div>Admin: admin@wedding.com / admin123</div>
+                    <div>Customer: emma@example.com / customer123</div>
+                </div>
+
+                <p class="text-center text-muted mt-3 small">
+                    No account? <a href="/register" class="text-decoration-none fw-semibold" style="color:#7c3f58;">Create one</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

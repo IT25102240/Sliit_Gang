@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>EverAfter - Wedding Booking System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet"/>
+    <style>
+        :root { --primary: #7c3f58; --accent: #c4956a; }
+        body { background: #fdf8f4; font-family: 'Segoe UI', sans-serif; }
+        .navbar { background: var(--primary) !important; }
+        .navbar-brand, .nav-link { color: #fff !important; }
+        .hero { background: linear-gradient(135deg, #7c3f58 0%, #a0556e 60%, #c4956a 100%);
+                color: #fff; padding: 100px 0 80px; text-align: center; }
+        .hero h1 { font-size: 3.2rem; font-weight: 800; margin-bottom: 1.2rem; }
+        .hero p { font-size: 1.2rem; opacity: 0.9; max-width: 600px; margin: 0 auto 2rem; }
+        .btn-primary { background: var(--primary); border-color: var(--primary); }
+        .btn-outline-light:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+        .feature-card { border: none; border-radius: 16px; padding: 2rem;
+                        box-shadow: 0 4px 20px rgba(124,63,88,0.08); text-align: center; transition: transform 0.2s; }
+        .feature-card:hover { transform: translateY(-4px); }
+        .feature-icon { width: 64px; height: 64px; background: linear-gradient(135deg,#7c3f58,#c4956a);
+                        border-radius: 50%; display: flex; align-items: center; justify-content: center;
+                        margin: 0 auto 1rem; font-size: 1.6rem; color: #fff; }
+        .section-title { text-align: center; margin-bottom: 3rem; }
+        .section-title h2 { font-weight: 700; color: var(--primary); }
+        .team-badge { background: #fdf2f8; border: 2px solid #e8d5c4; border-radius: 12px;
+                      padding: 1rem 1.5rem; text-align: center; }
+        footer { background: var(--primary); color: #e8d5c4; padding: 2rem 0; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/"><i class="bi bi-heart-fill me-2"></i>EverAfter Weddings</a>
+        <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item"><a class="nav-link" href="/packages">Packages</a></li>
+                <li class="nav-item"><a class="nav-link" href="/reviews">Reviews</a></li>
+                <th:block th:if="${currentUser != null}">
+                    <li class="nav-item" th:if="${currentUser.role == 'admin'}"><a class="nav-link" href="/dashboard">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/bookings">Bookings</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/logout">Sign Out</a></li>
+                </th:block>
+                <th:block th:if="${currentUser == null}">
+                    <li class="nav-item"><a class="nav-link" href="/login">Sign In</a></li>
+                    <li class="nav-item ms-2">
+                        <a class="btn btn-sm" style="background:#c4956a;color:#fff;border-radius:20px;padding:6px 18px;" href="/register">Get Started</a>
+                    </li>
+                </th:block>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="container">
+        <h1>Your Dream Wedding,<br/><em>Beautifully Realized</em></h1>
+        <p>An all-in-one platform for wedding venues and vendors. Browse packages, book seamlessly, and make every moment unforgettable.</p>
+        <a href="/packages" class="btn btn-light btn-lg me-3 px-4 rounded-pill">
+            <i class="bi bi-gift me-2"></i>Explore Packages
+        </a>
+        <a href="/register" class="btn btn-outline-light btn-lg px-4 rounded-pill">
+            Get Started Free
+        </a>
+    </div>
+</section>
+
+<!-- FEATURES -->
+<section class="py-5 mt-4">
+    <div class="container">
+        <div class="section-title">
+            <h2>Everything You Need</h2>
+            <p class="text-muted">Comprehensive tools for couples and vendors alike</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="feature-card bg-white">
+                    <div class="feature-icon"><i class="bi bi-person-check"></i></div>
+                    <h5 class="fw-bold">User Management</h5>
+                    <p class="text-muted small">Register, manage profiles and roles securely</p>
+                    <small class="text-muted">— Vidura</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="feature-card bg-white">
+                    <div class="feature-icon"><i class="bi bi-gift"></i></div>
+                    <h5 class="fw-bold">Wedding Packages</h5>
+                    <p class="text-muted small">Browse and book from curated wedding packages</p>
+                    <small class="text-muted">— Lahiru</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="feature-card bg-white">
+                    <div class="feature-icon"><i class="bi bi-calendar-check"></i></div>
+                    <h5 class="fw-bold">Booking & Payments</h5>
+                    <p class="text-muted small">Manage reservations and track payments easily</p>
+                    <small class="text-muted">— Daham</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="feature-card bg-white">
+                    <div class="feature-icon"><i class="bi bi-star"></i></div>
+                    <h5 class="fw-bold">Reviews</h5>
+                    <p class="text-muted small">Read and submit honest wedding reviews</p>
+                    <small class="text-muted">— Chanuka</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TECH BADGES -->
+<section class="py-4 bg-white">
+    <div class="container text-center">
+        <p class="text-muted mb-3">Built with OOP concepts: <strong>Linked List</strong> · <strong>Bubble Sort</strong> · <strong>Encapsulation</strong> · <strong>Inheritance</strong> · <strong>Polymorphism</strong> · <strong>Abstraction</strong></p>
+        <p class="text-muted small">SE1020 – Object Oriented Programming | SKU_OOP_G25 | Team: Vidura · Daham · Chanuka · Lahiru</p>
+    </div>
+</section>
+
+<footer class="text-center">
+    <p class="mb-0">&copy; 2024 EverAfter Wedding Booking System – SKU_OOP_G25</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

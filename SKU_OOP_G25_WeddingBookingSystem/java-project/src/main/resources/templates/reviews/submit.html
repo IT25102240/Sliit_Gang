@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Submit Review – EverAfter</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet"/>
+    <style>
+        body { background:#fdf8f4; } .navbar { background:#7c3f58 !important; } .navbar-brand,.nav-link { color:#fff !important; }
+        .btn-primary { background:#7c3f58; border-color:#7c3f58; }
+        .form-control:focus,.form-select:focus { border-color:#c4956a; box-shadow:0 0 0 .2rem rgba(196,149,106,.25); }
+        .card-header { background:#7c3f58; color:#fff; }
+        .star-input { font-size:2rem; cursor:pointer; color:#d1d5db; transition:color 0.15s; }
+        .star-input:hover, .star-input.active { color:#f59e0b; }
+    </style>
+</head>
+<body>
+<nav class="navbar"><div class="container">
+    <a class="navbar-brand fw-bold" href="/"><i class="bi bi-heart-fill me-2"></i>EverAfter</a>
+    <a class="nav-link" href="/reviews">Back to Reviews</a>
+</div></nav>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="card">
+                <div class="card-header"><i class="bi bi-star me-2"></i>Share Your Experience — Chanuka</div>
+                <div class="card-body p-4">
+                    <form th:action="@{/reviews/submit}" method="post">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Package</label>
+                            <select name="packageId" id="packageSelect" class="form-select" required
+                                    onchange="updatePackageName(this)">
+                                <option value="">-- Select a package --</option>
+                                <option th:each="p : ${packages}"
+                                        th:value="${p.id}"
+                                        th:text="${p.name}"
+                                        th:attr="data-name=${p.name}"></option>
+                            </select>
+                            <input type="hidden" name="packageName" id="packageName"/>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Rating</label>
+                            <div class="d-flex gap-1 mb-1">
+                                <span th:each="i : ${#numbers.sequence(1,5)}"
+                                      class="star-input bi bi-star-fill"
+                                      th:data-value="${i}"
+                                      onclick="setRating(this)"></span>
+                            </div>
+                            <input type="hidden" name="rating" id="ratingInput" value="5"/>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Review Title</label>
+                            <input type="text" name="title" class="form-control" placeholder="e.g. Perfect wedding day!" required/>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Your Review</label>
+                            <textarea name="comment" class="form-control" rows="4"
+                                      placeholder="Share the details of your experience..." required minlength="10"></textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Booking ID (optional — creates Verified review)</label>
+                            <input type="text" name="bookingId" class="form-control" placeholder="BKG12345 (leave blank for public review)"/>
+                            <small class="text-muted">Providing your Booking ID marks your review as Verified</small>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary flex-fill">
+                                <i class="bi bi-send me-2"></i>Submit Review
+                            </button>
+                            <a href="/reviews" class="btn btn-outline-secondary flex-fill">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function setRating(el) {
+    const val = parseInt(el.getAttribute('data-value'));
+    document.getElementById('ratingInput').value = val;
+    document.querySelectorAll('.star-input').forEach((s, i) => {
+        s.style.color = i < val ? '#f59e0b' : '#d1d5db';
+    });
+}
+function updatePackageName(sel) {
+    const opt = sel.options[sel.selectedIndex];
+    document.getElementById('packageName').value = opt.getAttribute('data-name') || '';
+}
+// Init: all stars gold (default 5)
+document.querySelectorAll('.star-input').forEach(s => s.style.color = '#f59e0b');
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

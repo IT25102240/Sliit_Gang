@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Wedding Packages – EverAfter</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet"/>
+    <style>
+        body { background:#fdf8f4; }
+        .navbar { background:#7c3f58 !important; } .navbar-brand,.nav-link { color:#fff !important; }
+        .page-header { background:linear-gradient(135deg,#7c3f58,#a0556e); color:#fff; padding:2.5rem 0; margin-bottom:2rem; }
+        .btn-primary { background:#7c3f58; border-color:#7c3f58; }
+        .btn-outline-primary { color:#7c3f58; border-color:#7c3f58; }
+        .btn-outline-primary:hover { background:#7c3f58; color:#fff; }
+        .pkg-card { border:1px solid #e8d5c4; border-radius:16px; overflow:hidden; transition:transform 0.2s,box-shadow 0.2s; }
+        .pkg-card:hover { transform:translateY(-4px); box-shadow:0 12px 32px rgba(124,63,88,0.12); }
+        .pkg-card-img { height:180px; background:linear-gradient(135deg,#f3e8ee,#fdf2e9); display:flex; align-items:center; justify-content:center; font-size:3rem; }
+        .badge-basic { background:#d1fae5; color:#065f46; border-radius:20px; padding:3px 12px; font-size:.78rem; }
+        .badge-premium { background:#fce7f3; color:#9d174d; border-radius:20px; padding:3px 12px; font-size:.78rem; }
+        .price-tag { font-size:1.5rem; font-weight:800; color:#7c3f58; }
+        .form-control:focus,.form-select:focus { border-color:#c4956a; box-shadow:0 0 0 .2rem rgba(196,149,106,.25); }
+        .sort-note { background:#fff8f2; border-left:3px solid #c4956a; padding:.5rem 1rem; border-radius:0 8px 8px 0; font-size:.85rem; }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/"><i class="bi bi-heart-fill me-2"></i>EverAfter</a>
+        <div class="d-flex gap-3 align-items-center">
+            <a class="nav-link" href="/reviews">Reviews</a>
+            <th:block th:if="${currentUser != null}">
+                <a class="nav-link" href="/bookings">Bookings</a>
+                <th:block th:if="${currentUser.role == 'admin'}">
+                    <a class="nav-link" href="/dashboard">Dashboard</a>
+                </th:block>
+                <a class="nav-link" href="/logout">Sign Out</a>
+            </th:block>
+            <th:block th:if="${currentUser == null}">
+                <a class="nav-link" href="/login">Sign In</a>
+            </th:block>
+        </div>
+    </div>
+</nav>
+
+<div class="page-header">
+    <div class="container">
+        <h2 class="fw-bold mb-1"><i class="bi bi-gift me-2"></i>Wedding Packages</h2>
+        <p class="mb-0 opacity-75">Lahiru's Component — Sorted using Bubble Sort · Stored in Linked List</p>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Search & Sort bar -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form th:action="@{/packages}" method="get" class="row g-2 align-items-end">
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Search Packages</label>
+                    <input type="text" name="search" class="form-control" placeholder="e.g. Garden, Beach..." th:value="${search}"/>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Sort By</label>
+                    <select name="sort" class="form-select">
+                        <option value="price" th:selected="${sort == 'price'}">Price (Bubble Sort)</option>
+                        <option value="name" th:selected="${sort == 'name'}">Name A-Z (Bubble Sort)</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search me-1"></i>Go</button>
+                </div>
+                <div class="col-md-1">
+                    <a href="/packages" class="btn btn-outline-secondary w-100">Clear</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="sort-note mb-4">
+        <i class="bi bi-info-circle me-1"></i>
+        Packages are sorted using <strong>Bubble Sort</strong> and stored dynamically in a custom <strong>Linked List</strong>.
+    </div>
+
+    <!-- Add button (admin only) -->
+    <div class="d-flex justify-content-end mb-3" th:if="${currentUser != null and currentUser.role == 'admin'}">
+        <a href="/packages/add" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i>Add Package</a>
+    </div>
+
+    <!-- Package Cards -->
+    <div class="row g-4">
+        <div class="col-md-4" th:each="pkg : ${packages}">
+            <div class="pkg-card bg-white">
+                <div class="pkg-card-img">
+                    <span th:if="${pkg.packageType == 'Basic'}">🌸</span>
+                    <span th:if="${pkg.packageType == 'Premium'}">👑</span>
+                </div>
+                <div class="p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span th:if="${pkg.packageType == 'Basic'}" class="badge-basic">Basic</span>
+                        <span th:if="${pkg.packageType == 'Premium'}" class="badge-premium">Premium</span>
+                        <span class="price-tag" th:text="'$' + ${pkg.price}"></span>
+                    </div>
+                    <h5 class="fw-bold mb-1" th:text="${pkg.name}"></h5>
+                    <p class="text-muted small mb-2" th:text="${pkg.description}"></p>
+                    <div class="d-flex gap-3 text-muted small mb-3">
+                        <span><i class="bi bi-people me-1"></i><span th:text="${pkg.maxGuests}"></span> guests</span>
+                        <span><i class="bi bi-shop me-1"></i><span th:text="${pkg.vendorName}"></span></span>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a th:href="@{/packages/{id}(id=${pkg.id})}" class="btn btn-primary btn-sm flex-fill">View Details</a>
+                        <th:block th:if="${currentUser != null and currentUser.role == 'admin'}">
+                            <a th:href="@{/packages/edit/{id}(id=${pkg.id})}" class="btn btn-outline-primary btn-sm"><i class="bi bi-pencil"></i></a>
+                            <form th:action="@{/packages/delete/{id}(id=${pkg.id})}" method="post" style="display:inline"
+                                  onsubmit="return confirm('Delete this package?')">
+                                <button type="submit" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </th:block>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 text-center py-5 text-muted" th:if="${packages.isEmpty()}">
+            <i class="bi bi-gift" style="font-size:3rem; opacity:.2;"></i>
+            <p class="mt-2">No packages found.</p>
+        </div>
+    </div>
+</div>
+
+<div style="height:4rem;"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
