@@ -1,0 +1,3 @@
+BASIC|PKG52042|Garden Ceremony|An intimate outdoor garden ceremony|2500.0|100|Green Garden Venue|true|Flowers,Chairs,Officiant
+PREMIUM|PKG33314|Grand Ballroom Reception|Luxurious ballroom with full catering|8500.0|300|Royal Grand Hotel|true|Catering,DJ,Flowers,Photography|Honeymoon Suite,Limo
+BASIC|PKG33314|Beach Wedding|Romantic beachfront ceremony|3800.0|100|Sunset Beach Venue|true|Arch,Chairs,Sound System
