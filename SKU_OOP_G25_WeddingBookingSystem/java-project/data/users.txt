@@ -1,4 +1,0 @@
-USR33327|Admin User|admin@wedding.com|0771234567|admin123|admin
-USR33327|Emma Johnson|emma@example.com|0779876543|customer123|customer
-USR55488|ViduraRvs|vidurarvs9@gmail.com|0777152372|vidura|customer
-USR45123|binura|vidurarvs11@gmail.com|0777152372|111111|customer
