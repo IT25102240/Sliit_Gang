@@ -1,11 +1,14 @@
 package com.wedding.model;
 
+import com.wedding.util.FileHandler;
+
 // OOP: INHERITANCE - PremiumPackage extends WeddingPackage
 // OOP: POLYMORPHISM - overrides abstract methods differently from BasicPackage
+// FIX: toFileString() sanitises all user-supplied string fields
 public class PremiumPackage extends WeddingPackage {
 
     private String includes;
-    private String addOns;      // additional luxury services
+    private String addOns; // additional luxury services
 
     public PremiumPackage() {}
 
@@ -14,7 +17,7 @@ public class PremiumPackage extends WeddingPackage {
                           String includes, String addOns) {
         super(id, name, description, price, maxGuests, vendorName);
         this.includes = includes;
-        this.addOns = addOns;
+        this.addOns   = addOns;
     }
 
     // OOP: POLYMORPHISM
@@ -30,11 +33,19 @@ public class PremiumPackage extends WeddingPackage {
     }
 
     // OOP: POLYMORPHISM
+    // FIX: all string fields sanitised
     @Override
     public String toFileString() {
-        return "PREMIUM|" + getId() + "|" + getName() + "|" + getDescription()
-                + "|" + getPrice() + "|" + getMaxGuests() + "|" + getVendorName()
-                + "|" + isAvailable() + "|" + includes + "|" + addOns;
+        return "PREMIUM|"
+                + getId() + "|"
+                + FileHandler.sanitise(getName()) + "|"
+                + FileHandler.sanitise(getDescription()) + "|"
+                + getPrice() + "|"
+                + getMaxGuests() + "|"
+                + FileHandler.sanitise(getVendorName()) + "|"
+                + isAvailable() + "|"
+                + FileHandler.sanitise(includes) + "|"
+                + FileHandler.sanitise(addOns);
     }
 
     public static PremiumPackage fromFileString(String line) {
@@ -47,8 +58,8 @@ public class PremiumPackage extends WeddingPackage {
     }
 
     public String getIncludes() { return includes; }
-    public void setIncludes(String includes) { this.includes = includes; }
+    public void   setIncludes(String includes) { this.includes = includes; }
 
-    public String getAddOns() { return addOns; }
-    public void setAddOns(String addOns) { this.addOns = addOns; }
+    public String getAddOns()   { return addOns; }
+    public void   setAddOns(String addOns) { this.addOns = addOns; }
 }

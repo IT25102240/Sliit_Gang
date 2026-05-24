@@ -123,13 +123,14 @@ public class PackageService {
 
     // UPDATE - Edit package
     public boolean updatePackage(String id, String name, String description,
-                                  double price, int maxGuests, String vendorName) {
+                                 double price, int maxGuests, String vendorName) {
         List<String> lines = fileHandler.readAll(FILE);
         List<String> updated = new ArrayList<>();
         boolean found = false;
         for (String line : lines) {
             WeddingPackage pkg = parseLine(line);
-            if (pkg != null && pkg.getId().equals(id)) {
+            // FIX: added "!found" — stops updating after the first match
+            if (pkg != null && pkg.getId().equals(id) && !found) {
                 pkg.setName(name);
                 pkg.setDescription(description);
                 pkg.setPrice(price);

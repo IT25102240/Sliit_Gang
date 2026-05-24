@@ -1,7 +1,10 @@
 package com.wedding.model;
 
+import com.wedding.util.FileHandler;
+
 // OOP: INHERITANCE - BasicPackage extends WeddingPackage
 // OOP: POLYMORPHISM - overrides abstract methods
+// FIX: toFileString() sanitises all user-supplied string fields
 public class BasicPackage extends WeddingPackage {
 
     private String includes; // comma-separated list of what's included
@@ -27,11 +30,18 @@ public class BasicPackage extends WeddingPackage {
     }
 
     // OOP: POLYMORPHISM
+    // FIX: all string fields sanitised
     @Override
     public String toFileString() {
-        return "BASIC|" + getId() + "|" + getName() + "|" + getDescription()
-                + "|" + getPrice() + "|" + getMaxGuests() + "|" + getVendorName()
-                + "|" + isAvailable() + "|" + includes;
+        return "BASIC|"
+                + getId() + "|"
+                + FileHandler.sanitise(getName()) + "|"
+                + FileHandler.sanitise(getDescription()) + "|"
+                + getPrice() + "|"
+                + getMaxGuests() + "|"
+                + FileHandler.sanitise(getVendorName()) + "|"
+                + isAvailable() + "|"
+                + FileHandler.sanitise(includes);
     }
 
     public static BasicPackage fromFileString(String line) {
@@ -44,5 +54,5 @@ public class BasicPackage extends WeddingPackage {
     }
 
     public String getIncludes() { return includes; }
-    public void setIncludes(String includes) { this.includes = includes; }
+    public void   setIncludes(String includes) { this.includes = includes; }
 }

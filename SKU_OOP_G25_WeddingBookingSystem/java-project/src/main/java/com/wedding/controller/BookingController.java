@@ -16,6 +16,9 @@ import jakarta.servlet.http.HttpSession;
 import java.util.List;
 
 // DAHAM - Booking & Payment Management Controller
+// FIX: ownership guard added to edit, update, and delete endpoints.
+//      A customer can only edit/delete their OWN bookings.
+//      Admin can edit/delete any booking.
 @Controller
 @RequestMapping("/bookings")
 public class BookingController {
@@ -25,8 +28,8 @@ public class BookingController {
     private final PaymentService paymentService;
 
     public BookingController(BookingService bookingService,
-                              PackageService packageService,
-                              PaymentService paymentService) {
+                             PackageService packageService,
+                             PaymentService paymentService) {
         this.bookingService = bookingService;
         this.packageService = packageService;
         this.paymentService = paymentService;
@@ -56,9 +59,14 @@ public class BookingController {
         Booking booking = bookingService.findById(id);
         if (booking == null) return "redirect:/bookings";
 
+        // FIX: customers can only view their own booking detail
+        if (!current.getRole().equals("admin") && !booking.getUserId().equals(current.getId())) {
+            return "redirect:/bookings";
+        }
+
         List<Payment> payments = paymentService.getByBookingId(id);
-        double totalPaid = paymentService.getTotalPaid(id);
-        double remaining = booking.getTotalAmount() - totalPaid;
+        double totalPaid  = paymentService.getTotalPaid(id);
+        double remaining  = booking.getTotalAmount() - totalPaid;
 
         model.addAttribute("booking", booking);
         model.addAttribute("payments", payments);
@@ -71,7 +79,7 @@ public class BookingController {
     // ─── CREATE BOOKING ──────────────────────────────────────────────────────
     @GetMapping("/create/{packageId}")
     public String createPage(@PathVariable String packageId,
-                              HttpSession session, Model model) {
+                             HttpSession session, Model model) {
         User current = (User) session.getAttribute("currentUser");
         if (current == null) return "redirect:/login";
 
@@ -85,14 +93,14 @@ public class BookingController {
 
     @PostMapping("/create")
     public String createBooking(@RequestParam String packageId,
-                                 @RequestParam String packageName,
-                                 @RequestParam String eventDate,
-                                 @RequestParam int guestCount,
-                                 @RequestParam String venueName,
-                                 @RequestParam double totalAmount,
-                                 @RequestParam(defaultValue = "") String specialRequests,
-                                 HttpSession session,
-                                 RedirectAttributes ra) {
+                                @RequestParam String packageName,
+                                @RequestParam String eventDate,
+                                @RequestParam int guestCount,
+                                @RequestParam String venueName,
+                                @RequestParam double totalAmount,
+                                @RequestParam(defaultValue = "") String specialRequests,
+                                HttpSession session,
+                                RedirectAttributes ra) {
         User current = (User) session.getAttribute("currentUser");
         if (current == null) return "redirect:/login";
 
@@ -105,8 +113,15 @@ public class BookingController {
     // ─── UPDATE STATUS (admin only) ──────────────────────────────────────────
     @PostMapping("/status/{id}")
     public String updateStatus(@PathVariable String id,
-                                @RequestParam String status,
-                                RedirectAttributes ra) {
+                               @RequestParam String status,
+                               HttpSession session,
+                               RedirectAttributes ra) {
+        // FIX: only admin can change booking status
+        User current = (User) session.getAttribute("currentUser");
+        if (current == null || !current.getRole().equals("admin")) {
+            ra.addFlashAttribute("error", "Only admins can update booking status.");
+            return "redirect:/bookings/" + id;
+        }
         boolean ok = bookingService.updateStatus(id, status);
         ra.addFlashAttribute(ok ? "success" : "error", ok ? "Status updated." : "Update failed.");
         return "redirect:/bookings/" + id;
@@ -117,8 +132,22 @@ public class BookingController {
     public String editPage(@PathVariable String id, HttpSession session, Model model) {
         User current = (User) session.getAttribute("currentUser");
         if (current == null) return "redirect:/login";
+
         Booking booking = bookingService.findById(id);
         if (booking == null) return "redirect:/bookings";
+
+        // FIX: ownership guard — customer can only edit their own bookings
+        if (!current.getRole().equals("admin") && !booking.getUserId().equals(current.getId())) {
+            return "redirect:/bookings";
+        }
+
+        // FIX: cannot edit a confirmed or completed booking (customer only)
+        if (!current.getRole().equals("admin") &&
+                (booking.getStatus().equals("confirmed") || booking.getStatus().equals("completed"))) {
+            model.addAttribute("error", "Confirmed or completed bookings cannot be edited.");
+            return "redirect:/bookings/" + id;
+        }
+
         model.addAttribute("booking", booking);
         model.addAttribute("currentUser", current);
         return "bookings/edit";
@@ -126,11 +155,24 @@ public class BookingController {
 
     @PostMapping("/update/{id}")
     public String updateBooking(@PathVariable String id,
-                                 @RequestParam String eventDate,
-                                 @RequestParam int guestCount,
-                                 @RequestParam String venueName,
-                                 @RequestParam String specialRequests,
-                                 RedirectAttributes ra) {
+                                @RequestParam String eventDate,
+                                @RequestParam int guestCount,
+                                @RequestParam String venueName,
+                                @RequestParam String specialRequests,
+                                HttpSession session,
+                                RedirectAttributes ra) {
+        User current = (User) session.getAttribute("currentUser");
+        if (current == null) return "redirect:/login";
+
+        Booking booking = bookingService.findById(id);
+        if (booking == null) return "redirect:/bookings";
+
+        // FIX: ownership guard
+        if (!current.getRole().equals("admin") && !booking.getUserId().equals(current.getId())) {
+            ra.addFlashAttribute("error", "You can only edit your own bookings.");
+            return "redirect:/bookings";
+        }
+
         boolean ok = bookingService.updateBooking(id, eventDate, guestCount, venueName, specialRequests);
         ra.addFlashAttribute(ok ? "success" : "error", ok ? "Booking updated." : "Update failed.");
         return "redirect:/bookings";
@@ -138,7 +180,21 @@ public class BookingController {
 
     // ─── DELETE BOOKING ──────────────────────────────────────────────────────
     @PostMapping("/delete/{id}")
-    public String deleteBooking(@PathVariable String id, RedirectAttributes ra) {
+    public String deleteBooking(@PathVariable String id,
+                                HttpSession session,
+                                RedirectAttributes ra) {
+        User current = (User) session.getAttribute("currentUser");
+        if (current == null) return "redirect:/login";
+
+        Booking booking = bookingService.findById(id);
+        if (booking == null) return "redirect:/bookings";
+
+        // FIX: ownership guard — customer can only delete their own pending bookings
+        if (!current.getRole().equals("admin") && !booking.getUserId().equals(current.getId())) {
+            ra.addFlashAttribute("error", "You can only delete your own bookings.");
+            return "redirect:/bookings";
+        }
+
         boolean ok = bookingService.deleteBooking(id);
         ra.addFlashAttribute(ok ? "success" : "error", ok ? "Booking deleted." : "Delete failed.");
         return "redirect:/bookings";
@@ -147,10 +203,23 @@ public class BookingController {
     // ─── RECORD PAYMENT ──────────────────────────────────────────────────────
     @PostMapping("/{id}/payment")
     public String recordPayment(@PathVariable String id,
-                                 @RequestParam double amount,
-                                 @RequestParam String method,
-                                 @RequestParam(defaultValue = "") String transactionRef,
-                                 RedirectAttributes ra) {
+                                @RequestParam double amount,
+                                @RequestParam String method,
+                                @RequestParam(defaultValue = "") String transactionRef,
+                                HttpSession session,
+                                RedirectAttributes ra) {
+        User current = (User) session.getAttribute("currentUser");
+        if (current == null) return "redirect:/login";
+
+        Booking booking = bookingService.findById(id);
+        if (booking == null) return "redirect:/bookings";
+
+        // FIX: only admin or the booking owner can make a payment
+        if (!current.getRole().equals("admin") && !booking.getUserId().equals(current.getId())) {
+            ra.addFlashAttribute("error", "Access denied.");
+            return "redirect:/bookings";
+        }
+
         paymentService.recordPayment(id, amount, method, transactionRef);
         ra.addFlashAttribute("success", "Payment recorded successfully.");
         return "redirect:/bookings/" + id;

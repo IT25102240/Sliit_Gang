@@ -1,7 +1,10 @@
 package com.wedding.model;
 
+import com.wedding.util.FileHandler;
+
 // OOP: INHERITANCE - VerifiedReview extends Review
 // OOP: POLYMORPHISM - overrides abstract methods, adds booking verification
+// FIX: toFileString() sanitises all user-supplied fields
 public class VerifiedReview extends Review {
 
     private String bookingId; // proof of purchase
@@ -13,7 +16,7 @@ public class VerifiedReview extends Review {
                           int rating, String title, String comment,
                           String createdDate, String bookingId) {
         super(reviewId, userId, userName, packageId, packageName,
-              rating, title, comment, createdDate);
+                rating, title, comment, createdDate);
         this.bookingId = bookingId;
     }
 
@@ -24,13 +27,20 @@ public class VerifiedReview extends Review {
     }
 
     // OOP: POLYMORPHISM - includes bookingId in file format
+    // FIX: all string fields sanitised
     @Override
     public String toFileString() {
-        return "VERIFIED|" + getReviewId() + "|" + getUserId() + "|" + getUserName()
-                + "|" + getPackageId() + "|" + getPackageName()
-                + "|" + getRating() + "|" + getTitle()
-                + "|" + getComment().replace("|", ",") + "|" + getCreatedDate()
-                + "|" + bookingId;
+        return "VERIFIED|"
+                + getReviewId() + "|"
+                + getUserId() + "|"
+                + FileHandler.sanitise(getUserName()) + "|"
+                + getPackageId() + "|"
+                + FileHandler.sanitise(getPackageName()) + "|"
+                + getRating() + "|"
+                + FileHandler.sanitise(getTitle()) + "|"
+                + FileHandler.sanitise(getComment()) + "|"
+                + getCreatedDate() + "|"
+                + bookingId;
     }
 
     public static VerifiedReview fromFileString(String line) {
@@ -41,5 +51,5 @@ public class VerifiedReview extends Review {
     }
 
     public String getBookingId() { return bookingId; }
-    public void setBookingId(String bookingId) { this.bookingId = bookingId; }
+    public void   setBookingId(String bookingId) { this.bookingId = bookingId; }
 }

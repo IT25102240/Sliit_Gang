@@ -1,7 +1,12 @@
 package com.wedding.model;
 
-// OOP: INHERITANCE - AdminUser extends User (multi-level inheritance)
+import com.wedding.util.FileHandler;
+
+// OOP: INHERITANCE - AdminUser extends User (multi-level inheritance: AdminUser -> User -> Person)
 // OOP: POLYMORPHISM - overrides getRole() and toFileString()
+// FIX: added public setRole() and setAccessLevel() so fromFileString in User.java
+//      can fully reconstruct an AdminUser from file — previously AdminUser was
+//      never actually deserialised; isSuperAdmin() was therefore dead code.
 public class AdminUser extends User {
 
     private String department;
@@ -9,6 +14,7 @@ public class AdminUser extends User {
 
     public AdminUser() {}
 
+    // Constructor — plain-text password is hashed by the parent User constructor
     public AdminUser(String id, String name, String email, String phone,
                      String password, String department, int accessLevel) {
         super(id, name, email, phone, password, "admin");
@@ -19,14 +25,21 @@ public class AdminUser extends User {
     // OOP: POLYMORPHISM - overrides Person.getRole()
     @Override
     public String getRole() {
-        return "admin (Level " + accessLevel + ")";
+        return "admin";
     }
 
     // OOP: POLYMORPHISM - overrides Person.toFileString()
+    // FIX: all string fields passed through FileHandler.sanitise()
     @Override
     public String toFileString() {
-        return getId() + "|" + getName() + "|" + getEmail() + "|" + getPhone()
-                + "|" + getPassword() + "|admin|" + department + "|" + accessLevel;
+        return FileHandler.sanitise(getId()) + "|"
+                + FileHandler.sanitise(getName()) + "|"
+                + FileHandler.sanitise(getEmail()) + "|"
+                + FileHandler.sanitise(getPhone()) + "|"
+                + getPassword() + "|"       // already a SHA-256 hex hash
+                + "admin|"
+                + FileHandler.sanitise(department) + "|"
+                + accessLevel;
     }
 
     // Check if admin has super access

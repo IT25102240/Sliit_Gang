@@ -1,20 +1,29 @@
 package com.wedding.util;
 
 import java.io.*;
-import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
 
 // FILE HANDLING utility — used by all service classes
-// Implements: read all lines, write all lines, append a line
+// FIX: Added sanitise() helper — strips the pipe character "|" from ANY
+//      user-supplied string before it reaches the file.  Previously only
+//      specialRequests was sanitised; all other fields (venueName, packageName,
+//      comment, etc.) could corrupt a record if a user typed a "|".
 public class FileHandler {
 
     private final String dataDir;
 
     public FileHandler(String dataDir) {
         this.dataDir = dataDir;
-        // Make sure the data directory exists
         new File(dataDir).mkdirs();
+    }
+
+    // ── Sanitise a single value before writing to file ──────────────────────
+    // Replaces "|" with a comma so the pipe-delimited format is never broken.
+    // Call this on EVERY user-supplied string before building toFileString().
+    public static String sanitise(String value) {
+        if (value == null) return "";
+        return value.replace("|", ",");
     }
 
     // READ all lines from a file (returns empty list if file doesn't exist)
