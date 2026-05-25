@@ -2,9 +2,11 @@ package com.wedding.model;
 
 import com.wedding.util.FileHandler;
 
+// CHANUKA -IT25102207 Feedback & Review Management
 // OOP: INHERITANCE - VerifiedReview extends Review
 // OOP: POLYMORPHISM - overrides abstract methods, adds booking verification
 // FIX: toFileString() sanitises all user-supplied fields
+
 public class VerifiedReview extends Review {
 
     private String bookingId; // proof of purchase

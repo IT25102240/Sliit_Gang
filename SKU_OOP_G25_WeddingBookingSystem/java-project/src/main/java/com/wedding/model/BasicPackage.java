@@ -1,7 +1,7 @@
 package com.wedding.model;
 
 import com.wedding.util.FileHandler;
-
+// LAHIRU  IT25102208
 // OOP: INHERITANCE - BasicPackage extends WeddingPackage
 // OOP: POLYMORPHISM - overrides abstract methods
 // FIX: toFileString() sanitises all user-supplied string fields

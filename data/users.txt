@@ -1,3 +1,4 @@
 USR-7124A5CE|Admin User|admin@wedding.com|0771234567|240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9|admin|Management|2
 USR-F0BDAC05|Emma Johnson|emma@example.com|0779876543|b041c0aeb35bb0fa4aa668ca5a920b590196fdaf9a00eb852c9b7f4d123cc6d6|customer
 USR-FDD27CE8|Senath Bandaranayake|senathpathmiraba@gmail.com|0751234567|ee79976c9380d5e337fc1c095ece8c8f22f91f306ceeb161fa51fecede2c4ba1|customer
+USR-2FAD0AFD|vidura rammandalagedara|vidurarvs@gmail.com|0753660443|ee79976c9380d5e337fc1c095ece8c8f22f91f306ceeb161fa51fecede2c4ba1|vendor
