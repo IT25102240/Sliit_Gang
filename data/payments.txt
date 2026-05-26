@@ -1,1 +1,2 @@
 PAY-3A8F50B9|BKG-FC534EF9|2000.0|bank_transfer|completed|Payment|2026-05-24
+PAY-DA1D78D4|BKG-FC534EF9|1000.0|card|completed|payment|2026-05-26
